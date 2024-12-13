@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { sidebarLinks } from '@/constance'
-import Image from 'next/image'
-import { usePathname, useRouter } from 'next/navigation'
-import { SignedIn, SignOutButton } from '@clerk/nextjs'
+import Link from 'next/link';
+import { sidebarLinks } from '@/constance';
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
+import { SignedIn, SignOutButton, useAuth } from '@clerk/nextjs';
 
 function LeftSideBar() {
-  const router = useRouter()
-  const pathName = usePathname()
+  const pathName = usePathname();
+  const { userId } = useAuth(); // Extract userId properly
 
   return (
     <section className="custom-scrollbar leftsidebar">
@@ -16,13 +16,20 @@ function LeftSideBar() {
         {sidebarLinks.map((link) => {
           const isActive =
             (pathName.includes(link.route) && link.route.length > 1) ||
-            pathName === link.route
+            pathName === link.route;
+
+          // Compute the route dynamically, but do not modify the original link object
+          const dynamicRoute =
+            link.route === '/profile' && userId
+              ? `/profile/${userId}`
+              : link.route;
 
           return (
             <Link
-              href={link.route}
+              href={dynamicRoute}
               key={link.label}
-              className={`leftsidebar_link ${isActive && 'bg-primary-500'}`}>
+              className={`leftsidebar_link ${isActive && 'bg-primary-500'}`}
+            >
               <Image
                 src={link.imgURL}
                 alt={link.label}
@@ -31,7 +38,7 @@ function LeftSideBar() {
               />
               <p className="text-light-1 max-lg:hidden">{link.label}</p>
             </Link>
-          )
+          );
         })}
       </div>
       <div className="mt-10 px-6">
@@ -50,7 +57,7 @@ function LeftSideBar() {
         </SignedIn>
       </div>
     </section>
-  )
+  );
 }
 
-export default LeftSideBar
+export default LeftSideBar;
