@@ -9,7 +9,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
   if (!params.id) return null
 
   const user = await currentUser()
-  if (!user) return null
+  if (!user) redirect('/sign-in')
 
   const userInfo = await fetchUser(user.id)
   if (!userInfo.onboarded) redirect('/onboarding')
@@ -31,27 +31,27 @@ const Page = async ({ params }: { params: { id: string } }) => {
           comments={thread.children}
         />
       </div>
-      <div className='mt-7'>
-        <Comment 
-        threadId={thread.id}
-        currentUserImg={userInfo.image}
-        currentUserId={JSON.stringify(userInfo._id)}
+      <div className="mt-7">
+        <Comment
+          threadId={thread.id}
+          currentUserImg={userInfo.image}
+          currentUserId={JSON.stringify(userInfo._id)}
         />
       </div>
-      <div className='mt-10'>
+      <div className="mt-10">
         {thread.children.map((childItem: any) => (
           <ThreadCard
-          key={childItem._id}
-          id={childItem.id}
-          currentUserId={user?.id || ''}
-          parentId={childItem.parentId}
-          content={childItem.text}
-          author={childItem.author}
-          community={childItem.community}
-          createdAt={childItem.createdAt}
-          comments={childItem.children}
-          isComment
-        />
+            key={childItem._id}
+            id={childItem.id}
+            currentUserId={user?.id || ''}
+            parentId={childItem.parentId}
+            content={childItem.text}
+            author={childItem.author}
+            community={childItem.community}
+            createdAt={childItem.createdAt}
+            comments={childItem.children}
+            isComment
+          />
         ))}
       </div>
     </section>
